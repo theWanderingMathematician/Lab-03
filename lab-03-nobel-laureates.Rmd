@@ -221,8 +221,7 @@ There are some observations in this dataset that we will exclude from our analys
 -   laureates who are people as opposed to organizations (organizations are denoted with `"org"` as their `gender`)
 -   laureates who are still alive (their `died_date` is `NA`)
 
-```{r echo=FALSE}
-#|label: living-nobel-laureates
+```{r}
 nobel_living <- nobel %>%
   filter(
     !is.na(country),
@@ -279,7 +278,12 @@ This means you'll need to define this data frame in your R Markdown document, ev
     -   Flip the coordinates so the bars are horizontal, not vertical.
 
 ```{r}
-#|label: Buzzfeed-visualisation-test
+nobel_living_science <- nobel_living %>%
+  mutate(
+    country_us = if_else(country == "USA", "USA", "Other")
+  ) %>%
+  filter(category %in% c("Physics", "Medicine", "Chemistry", "Economics"))
+
 nobel_living_science %>%
   ggplot(aes(x = "", fill = country_us, colour = country_us)) + 
   geom_bar(position = "dodge") +
@@ -300,6 +304,16 @@ nobel_living_science %>%
 
 4.  Create a new variable called `born_country_us` that has the value `"USA"` if the laureate is born in the US, and `"Other"` otherwise.
     How many of the winners are born in the US?
+```{r}
+nobel_bornin_US <- nobel_living_science %>%
+  mutate(
+    born_country_us = if_else(born_country == "USA", "USA", "Other")
+    ) %>%
+  filter(born_country_us == "USA") %>%
+  count()
+```
+
+- *Of the winners who were living in the USA when they got their awards, `r nobel_bornin_US` were born in the USA*
 
 5.  Add a second variable to your visualization from Exercise 3 based on whether the laureate was born in the US or not.
     Based on your visualization, do the data appear to support Buzzfeed's claim?
@@ -308,6 +322,26 @@ nobel_living_science %>%
     -   Your final visualization should contain a facet for each category.
     -   Within each facet, there should be a bar for whether the laureate won the award in the US or not.
     -   Each bar should have segments for whether the laureate was born in the US or not.
+
+```{r}
+nobel_living_science <- nobel_living %>%
+  mutate(
+    country_us = if_else(country == "USA", "USA", "Other")
+  ) %>%
+  mutate(
+    born_country_us = if_else(born_country == "USA", "USA", "Other")
+    ) %>%
+  filter(category %in% c("Physics", "Medicine", "Chemistry", "Economics"))
+
+nobel_living_science %>%
+  ggplot(aes(x = born_country_us, fill = country_us, colour = country_us)) + 
+  geom_bar() +
+  facet_wrap(~ category) +
+  coord_flip() +
+  labs(title = "Nobel laureates", subtitle = "By whether they were born in the USA", x = "Country of residence", colour = "Country of birth", fill = "Country of birth")
+```
+
+- *This data does not actually support Buzzfeed's conclusion, and shows a much smaller proportion of US Nobel Laureates who were born in other countries, with none at all in the fields of Chemistry and Economics. Perhaps they combined the data from other parts of the chart into their second graph? Either way, these proportions are much smaller than the proportions that were shown in the article.*
 
 🧶 ✅ ⬆️ Knit, *commit, and push your changes to GitHub with an appropriate commit message. Make sure to commit and push all changed files so that your Git pane is cleared up afterwards.*
 

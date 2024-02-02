@@ -222,6 +222,8 @@ There are some observations in this dataset that we will exclude from our analys
 -   laureates who are still alive (their `died_date` is `NA`)
 
 ```{r}
+#| label: live_laureates
+
 nobel_living <- nobel %>%
   filter(
     !is.na(country),
@@ -254,6 +256,7 @@ Note that we can achieve the same result using the `fct_other()` function we've 
 ```
 
 ```{r}
+#| label: us_check
 nobel_living <- nobel_living %>%
   mutate(
     country_us = if_else(country == "USA", "USA", "Other")
@@ -263,6 +266,7 @@ nobel_living <- nobel_living %>%
 Next, we will limit our analysis to only the following categories: Physics, Medicine, Chemistry, and Economics.
 
 ```{r}
+#| label: analysis_categories
 nobel_living_science <- nobel_living %>%
   filter(category %in% c("Physics", "Medicine", "Chemistry", "Economics"))
 ```
@@ -278,6 +282,7 @@ This means you'll need to define this data frame in your R Markdown document, ev
     -   Flip the coordinates so the bars are horizontal, not vertical.
 
 ```{r}
+#| label: laureates_by_residence_country
 nobel_living_science <- nobel_living %>%
   mutate(
     country_us = if_else(country == "USA", "USA", "Other")
@@ -305,6 +310,7 @@ nobel_living_science %>%
 4.  Create a new variable called `born_country_us` that has the value `"USA"` if the laureate is born in the US, and `"Other"` otherwise.
     How many of the winners are born in the US?
 ```{r}
+#| label: born_in_us_count
 nobel_bornin_US <- nobel_living_science %>%
   mutate(
     born_country_us = if_else(born_country == "USA", "USA", "Other")
@@ -324,6 +330,7 @@ nobel_bornin_US <- nobel_living_science %>%
     -   Each bar should have segments for whether the laureate was born in the US or not.
 
 ```{r}
+#| label: laureates_by_us_birth
 nobel_living_science <- nobel_living %>%
   mutate(
     country_us = if_else(country == "USA", "USA", "Other")
@@ -352,6 +359,19 @@ Note that your bar plot won't exactly match the one from the Buzzfeed article. T
 ```
 
 6.  In a single pipeline, filter for laureates who won their prize in the US, but were born outside of the US, and then create a frequency table (with the `count()` function) for their birth country (`born_country`) and arrange the resulting data frame in descending order of number of observations for each country. Which country is the most common?
+
+```{r}
+#| label: birth-country-list
+nobel_living_science %>%
+  filter(
+    country == "USA",
+    born_country != "USA"
+  ) %>%
+  count(born_country) %>%
+  arrange(desc(n))
+```
+
+- *Germany and the United Kingdom are tied for the highest amount of Nobel laureates living in the USA at 7 each, followed by China with 5.*
 
 🧶 ✅ ⬆️ Knit, *commit, and push your changes to GitHub with an appropriate commit message. Make sure to commit and push all changed files so that your Git pane is cleared up afterwards and review the md document on GitHub to make sure you're happy with the final state of your work.*
 

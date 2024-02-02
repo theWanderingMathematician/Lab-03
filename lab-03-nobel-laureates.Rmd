@@ -222,6 +222,7 @@ There are some observations in this dataset that we will exclude from our analys
 -   laureates who are still alive (their `died_date` is `NA`)
 
 ```{r echo=FALSE}
+#|label: living-nobel-laureates
 nobel_living <- nobel %>%
   filter(
     !is.na(country),
@@ -276,6 +277,18 @@ This means you'll need to define this data frame in your R Markdown document, ev
     -   Your visualization should be faceted by category.
     -   For each facet you should have two bars, one for winners in the US and one for Other.
     -   Flip the coordinates so the bars are horizontal, not vertical.
+
+```{r}
+#|label: Buzzfeed-visualisation-test
+nobel_living_science %>%
+  ggplot(aes(x = "", fill = country_us, colour = country_us)) + 
+  geom_bar(position = "dodge") +
+  facet_wrap(~ category, ncol = 1) +
+  coord_flip() +
+  labs(title = "Nobel laureates", subtitle = "By residence in USA at time of award", x = " ", colour = "Country of residence", fill = "Country of residence")
+```
+
+- *Looking at this graph, it does support the statement made by the buzzfeed article, even matching the rough proportions of the statistics in each category.*
 
 🧶 ✅ ⬆️ Knit, *commit, and push your changes to GitHub with an appropriate commit message. Make sure to commit and push all changed files so that your Git pane is cleared up afterwards.d*
 
